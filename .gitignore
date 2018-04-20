@@ -1,0 +1,9 @@
+.vs/
+
+debug/
+release/
+obj/
+
+*.pdb
+*.pde
+*.bak
