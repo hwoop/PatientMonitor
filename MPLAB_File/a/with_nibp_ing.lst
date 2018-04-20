@@ -1,0 +1,716 @@
+CCS PCM C Compiler, Version 4.065, 26331               19-11-14 15:38
+
+               Filename: with_nibp_ing.lst
+
+               ROM used: 500 words (6%)
+                         Largest free fragment is 2048
+               RAM used: 59 (16%) at main() level
+                         68 (18%) worst case
+               Stack:    3 worst case (1 in main + 2 for interrupts)
+
+*
+0000:  MOVLW  00
+0001:  MOVWF  0A
+0002:  GOTO   19A
+0003:  NOP
+0004:  MOVWF  7F
+0005:  SWAPF  03,W
+0006:  CLRF   03
+0007:  MOVWF  21
+0008:  MOVF   0A,W
+0009:  MOVWF  20
+000A:  CLRF   0A
+000B:  MOVF   04,W
+000C:  MOVWF  22
+000D:  MOVF   77,W
+000E:  MOVWF  23
+000F:  MOVF   78,W
+0010:  MOVWF  24
+0011:  MOVF   79,W
+0012:  MOVWF  25
+0013:  MOVF   7A,W
+0014:  MOVWF  26
+0015:  MOVF   7B,W
+0016:  MOVWF  27
+0017:  BCF    03.7
+0018:  BCF    03.5
+0019:  BTFSS  0B.5
+001A:  GOTO   01D
+001B:  BTFSC  0B.2
+001C:  GOTO   030
+001D:  MOVF   22,W
+001E:  MOVWF  04
+001F:  MOVF   23,W
+0020:  MOVWF  77
+0021:  MOVF   24,W
+0022:  MOVWF  78
+0023:  MOVF   25,W
+0024:  MOVWF  79
+0025:  MOVF   26,W
+0026:  MOVWF  7A
+0027:  MOVF   27,W
+0028:  MOVWF  7B
+0029:  MOVF   20,W
+002A:  MOVWF  0A
+002B:  SWAPF  21,W
+002C:  MOVWF  03
+002D:  SWAPF  7F,F
+002E:  SWAPF  7F,W
+002F:  RETFIE
+0030:  BCF    0A.3
+0031:  BCF    0A.4
+0032:  GOTO   042
+.................... //--------??? ?? ---------------// 
+.................... #include <16F877a.h> 
+.................... //////// Standard Header file for the PIC16F877A device //////////////// 
+.................... #device PIC16F877A 
+.................... #list 
+....................  
+.................... #fuses HS,NOWDT,NOPROTECT,NOLVP 
+.................... #use delay(clock=20000000) 
+*
+0186:  MOVLW  55
+0187:  MOVWF  04
+0188:  BCF    03.7
+0189:  MOVF   00,W
+018A:  BTFSC  03.2
+018B:  GOTO   199
+018C:  MOVLW  06
+018D:  MOVWF  78
+018E:  CLRF   77
+018F:  DECFSZ 77,F
+0190:  GOTO   18F
+0191:  DECFSZ 78,F
+0192:  GOTO   18E
+0193:  MOVLW  7B
+0194:  MOVWF  77
+0195:  DECFSZ 77,F
+0196:  GOTO   195
+0197:  DECFSZ 00,F
+0198:  GOTO   18C
+0199:  RETLW  00
+.................... #use rs232 (baud = 115200, errors, parity=N, xmit = PIN_C6, rcv = PIN_C7) 
+*
+01AD:  BCF    03.5
+01AE:  CLRF   28
+....................  
+.................... //--------?? define-------------// 
+.................... #define Buzzer_ON		output_high(PIN_C0) 
+.................... #define Buzzer_OFF		output_low(PIN_C0) 
+.................... #define ch_nibp_DC 	0 
+.................... #define ch_nibp_AC 	1 
+.................... #define ch_ecg 		2 
+.................... #define ch_ppg 		3 
+....................  
+.................... int Timer_flag = 0; 
+01AF:  CLRF   29
+.................... int MA_buffer_ecg[8] = {0,0,0,0,0,0,0,0};	// buffer array for moving average filter 
+01B0:  CLRF   2A
+01B1:  CLRF   2B
+01B2:  CLRF   2C
+01B3:  CLRF   2D
+01B4:  CLRF   2E
+01B5:  CLRF   2F
+01B6:  CLRF   30
+01B7:  CLRF   31
+.................... int MA_buffer_ppg[8] = {0,0,0,0,0,0,0,0};	// buffer array for moving average filter 
+01B8:  CLRF   32
+01B9:  CLRF   33
+01BA:  CLRF   34
+01BB:  CLRF   35
+01BC:  CLRF   36
+01BD:  CLRF   37
+01BE:  CLRF   38
+01BF:  CLRF   39
+.................... int MA_buffer_nibp_AC[8] = {0,0,0,0,0,0,0,0};	// buffer array for moving average filter 
+01C0:  CLRF   3A
+01C1:  CLRF   3B
+01C2:  CLRF   3C
+01C3:  CLRF   3D
+01C4:  CLRF   3E
+01C5:  CLRF   3F
+01C6:  CLRF   40
+01C7:  CLRF   41
+.................... int MA_buffer_nibp_DC[8] = {0,0,0,0,0,0,0,0};	// buffer array for moving average filter 
+01C8:  CLRF   42
+01C9:  CLRF   43
+01CA:  CLRF   44
+01CB:  CLRF   45
+01CC:  CLRF   46
+01CD:  CLRF   47
+01CE:  CLRF   48
+01CF:  CLRF   49
+....................  
+.................... int ecg_out = 10; 
+01D0:  MOVLW  0A
+01D1:  MOVWF  4A
+.................... int ppg_out = 10; 
+01D2:  MOVWF  4B
+.................... int nibp_AC_out = 10; 
+01D3:  MOVWF  4C
+.................... int nibp_DC_out = 10; 
+01D4:  MOVWF  4D
+....................  
+....................  
+.................... int ecg_data = 10;	 
+01D5:  MOVWF  4E
+.................... int ppg_data = 10; 
+01D6:  MOVWF  4F
+.................... int nibp_AC_data = 10; 
+01D7:  MOVWF  50
+.................... int nibp_DC_data = 10; 
+01D8:  MOVWF  51
+....................  
+....................  
+.................... //--------?? ?? ??-------// 
+.................... void system_Init(void); 
+....................  
+.................... int MA_Filter_8point_ecg(int data); 
+.................... int MA_Filter_8point_ppg(int data); 
+.................... int MA_Filter_8point_nibp_AC(int data); 
+.................... int MA_Filter_8point_nibp_DC(int data); 
+....................  
+.................... void biosignal_ch_sel(int ch); 
+.................... void rs232_out(void); 
+....................  
+.................... //------- ???? ??? ------// 
+.................... #INT_RTCC 
+.................... RTCC_ISR(){ 
+.................... 	set_RTCC(94);		// 480Hz sampling : 1?? 480? 
+*
+0042:  MOVLW  5E
+0043:  MOVWF  01
+....................  
+.................... 	biosignal_ch_sel(ch_ecg); 
+0044:  MOVLW  02
+0045:  MOVWF  56
+0046:  CALL   033
+.................... 	ecg_data = read_adc();  
+0047:  BSF    1F.2
+0048:  BTFSC  1F.2
+0049:  GOTO   048
+004A:  MOVF   1E,W
+004B:  MOVWF  4E
+.................... 	ecg_out = MA_Filter_8point_ecg(ecg_data); 
+004C:  MOVF   4E,W
+004D:  MOVWF  56
+*
+0086:  MOVF   78,W
+0087:  MOVWF  4A
+....................  
+.................... 	biosignal_ch_sel(ch_ppg); 
+0088:  MOVLW  03
+0089:  MOVWF  56
+008A:  CALL   033
+.................... 	ppg_data = read_adc();  
+008B:  BSF    1F.2
+008C:  BTFSC  1F.2
+008D:  GOTO   08C
+008E:  MOVF   1E,W
+008F:  MOVWF  4F
+.................... 	ppg_out = MA_Filter_8point_ppg(ppg_data); 
+0090:  MOVF   4F,W
+0091:  MOVWF  56
+*
+00CA:  MOVF   78,W
+00CB:  MOVWF  4B
+....................  
+.................... 	biosignal_ch_sel(ch_nibp_AC); 
+00CC:  MOVLW  01
+00CD:  MOVWF  56
+00CE:  CALL   033
+.................... 	nibp_AC_data = read_adc();  
+00CF:  BSF    1F.2
+00D0:  BTFSC  1F.2
+00D1:  GOTO   0D0
+00D2:  MOVF   1E,W
+00D3:  MOVWF  50
+.................... 	nibp_AC_out = MA_Filter_8point_nibp_AC(nibp_AC_data); 
+00D4:  MOVF   50,W
+00D5:  MOVWF  56
+*
+010E:  MOVF   78,W
+010F:  MOVWF  4C
+....................  	nibp_AC_out = nibp_AC_data; 
+0110:  MOVF   50,W
+0111:  MOVWF  4C
+....................  
+.................... 	biosignal_ch_sel(ch_nibp_DC); 
+0112:  CLRF   56
+0113:  CALL   033
+.................... 	nibp_DC_data = read_adc();  
+0114:  BSF    1F.2
+0115:  BTFSC  1F.2
+0116:  GOTO   115
+0117:  MOVF   1E,W
+0118:  MOVWF  51
+.................... 	nibp_DC_out = MA_Filter_8point_nibp_DC(nibp_DC_data); 
+0119:  MOVF   51,W
+011A:  MOVWF  56
+*
+0153:  MOVF   78,W
+0154:  MOVWF  4D
+.................... 	nibp_DC_out = nibp_DC_data; 
+0155:  MOVF   51,W
+0156:  MOVWF  4D
+.................... rs232_out(); 
+.................... 	Timer_flag = 1; 
+*
+0180:  MOVLW  01
+0181:  MOVWF  29
+.................... } 
+....................  
+.................... //----------?? ??-----------// 
+0182:  BCF    0B.2
+0183:  BCF    0A.3
+0184:  BCF    0A.4
+0185:  GOTO   01D
+.................... void main() { 
+*
+019A:  CLRF   04
+019B:  BCF    03.7
+019C:  MOVLW  1F
+019D:  ANDWF  03,F
+019E:  MOVLW  0A
+019F:  BSF    03.5
+01A0:  MOVWF  19
+01A1:  MOVLW  A6
+01A2:  MOVWF  18
+01A3:  MOVLW  90
+01A4:  BCF    03.5
+01A5:  MOVWF  18
+01A6:  BSF    03.5
+01A7:  BSF    1F.0
+01A8:  BSF    1F.1
+01A9:  BSF    1F.2
+01AA:  BCF    1F.3
+01AB:  MOVLW  07
+01AC:  MOVWF  1C
+....................  
+.................... 	int timeCnt = 0; 
+*
+01DB:  CLRF   53
+.................... 	 
+.................... 	//stem_Init();		//??? ??? 
+.................... 	 
+.................... 	while(1){ 
+.................... 		putc(0x31); 
+01DC:  MOVLW  31
+01DD:  BTFSS  0C.4
+01DE:  GOTO   1DD
+01DF:  MOVWF  19
+.................... 		delay_ms(400); 
+01E0:  MOVLW  02
+01E1:  MOVWF  54
+01E2:  MOVLW  C8
+01E3:  MOVWF  55
+01E4:  CALL   186
+01E5:  DECFSZ 54,F
+01E6:  GOTO   1E2
+.................... 		putc(0x32); 
+01E7:  MOVLW  32
+01E8:  BTFSS  0C.4
+01E9:  GOTO   1E8
+01EA:  MOVWF  19
+.................... 		delay_ms(400); 
+01EB:  MOVLW  02
+01EC:  MOVWF  54
+01ED:  MOVLW  C8
+01EE:  MOVWF  55
+01EF:  CALL   186
+01F0:  DECFSZ 54,F
+01F1:  GOTO   1ED
+.................... 	}// End of while()... 
+01F2:  GOTO   1DC
+....................  
+....................  
+....................  
+.................... }// End of main()... 
+....................  
+....................  
+....................  
+.................... //------------?? ???----------// 
+.................... // ??? ??? ?? // 
+....................  
+.................... void system_Init(void){ 
+....................  
+01F3:  SLEEP
+.................... 	Buzzer_OFF;					//?? ??? 
+*
+01D9:  MOVLW  FF
+01DA:  MOVWF  52
+.................... 	setup_adc_ports(ALL_ANALOG); 
+.................... 	setup_adc(ADC_CLOCK_INTERNAL); 
+....................  
+.................... 	biosignal_ch_sel(ch_ecg); 
+.................... 	setup_counters(rtcc_internal, rtcc_div_64); 
+.................... 	enable_interrupts(int_rtcc); 
+.................... 	enable_interrupts(global); 
+.................... 	 
+.................... }//End of System_Init()... 
+....................  
+....................  
+.................... int MA_Filter_8point_ecg(int data) 
+.................... { 
+.................... 	int i; 
+.................... 	unsigned long MA_Output=0; 
+*
+004E:  CLRF   58
+004F:  CLRF   59
+....................  
+.................... 	for(i=0;i<7;i++)  MA_buffer_ecg[i] = MA_buffer_ecg[i+1]; 
+0050:  CLRF   57
+0051:  MOVF   57,W
+0052:  SUBLW  06
+0053:  BTFSS  03.0
+0054:  GOTO   06B
+0055:  MOVLW  2A
+0056:  ADDWF  57,W
+0057:  MOVWF  78
+0058:  CLRF   7A
+0059:  BTFSC  03.0
+005A:  INCF   7A,F
+005B:  MOVLW  01
+005C:  ADDWF  57,W
+005D:  ADDLW  2A
+005E:  MOVWF  04
+005F:  BCF    03.7
+0060:  MOVF   00,W
+0061:  MOVWF  5D
+0062:  MOVF   78,W
+0063:  MOVWF  04
+0064:  BCF    03.7
+0065:  BTFSC  7A.0
+0066:  BSF    03.7
+0067:  MOVF   5D,W
+0068:  MOVWF  00
+0069:  INCF   57,F
+006A:  GOTO   051
+.................... 	MA_buffer_ecg[7] = data; 
+006B:  MOVF   56,W
+006C:  MOVWF  31
+.................... 	for(i=0;i<8;i++) MA_Output += MA_buffer_ecg[i]; 
+006D:  CLRF   57
+006E:  MOVF   57,W
+006F:  SUBLW  07
+0070:  BTFSS  03.0
+0071:  GOTO   07C
+0072:  MOVLW  2A
+0073:  ADDWF  57,W
+0074:  MOVWF  04
+0075:  BCF    03.7
+0076:  MOVF   00,W
+0077:  ADDWF  58,F
+0078:  BTFSC  03.0
+0079:  INCF   59,F
+007A:  INCF   57,F
+007B:  GOTO   06E
+.................... 	MA_Output = (MA_Output >> 3); 
+007C:  RRF    59,F
+007D:  RRF    58,F
+007E:  RRF    59,F
+007F:  RRF    58,F
+0080:  RRF    59,F
+0081:  RRF    58,F
+0082:  MOVLW  1F
+0083:  ANDWF  59,F
+.................... 	 
+.................... 	return (int)MA_Output;	 
+0084:  MOVF   58,W
+0085:  MOVWF  78
+.................... }//End of MA_filter()... 
+....................  
+.................... int MA_Filter_8point_ppg(int data) 
+.................... { 
+.................... 	int i; 
+.................... 	unsigned long MA_Output=0; 
+*
+0092:  CLRF   58
+0093:  CLRF   59
+....................  
+.................... 	for(i=0;i<7;i++)  MA_buffer_ppg[i] = MA_buffer_ppg[i+1]; 
+0094:  CLRF   57
+0095:  MOVF   57,W
+0096:  SUBLW  06
+0097:  BTFSS  03.0
+0098:  GOTO   0AF
+0099:  MOVLW  32
+009A:  ADDWF  57,W
+009B:  MOVWF  78
+009C:  CLRF   7A
+009D:  BTFSC  03.0
+009E:  INCF   7A,F
+009F:  MOVLW  01
+00A0:  ADDWF  57,W
+00A1:  ADDLW  32
+00A2:  MOVWF  04
+00A3:  BCF    03.7
+00A4:  MOVF   00,W
+00A5:  MOVWF  5D
+00A6:  MOVF   78,W
+00A7:  MOVWF  04
+00A8:  BCF    03.7
+00A9:  BTFSC  7A.0
+00AA:  BSF    03.7
+00AB:  MOVF   5D,W
+00AC:  MOVWF  00
+00AD:  INCF   57,F
+00AE:  GOTO   095
+.................... 	MA_buffer_ppg[7] = data; 
+00AF:  MOVF   56,W
+00B0:  MOVWF  39
+.................... 	for(i=0;i<8;i++) MA_Output += MA_buffer_ppg[i]; 
+00B1:  CLRF   57
+00B2:  MOVF   57,W
+00B3:  SUBLW  07
+00B4:  BTFSS  03.0
+00B5:  GOTO   0C0
+00B6:  MOVLW  32
+00B7:  ADDWF  57,W
+00B8:  MOVWF  04
+00B9:  BCF    03.7
+00BA:  MOVF   00,W
+00BB:  ADDWF  58,F
+00BC:  BTFSC  03.0
+00BD:  INCF   59,F
+00BE:  INCF   57,F
+00BF:  GOTO   0B2
+.................... 	MA_Output = (MA_Output >> 3); 
+00C0:  RRF    59,F
+00C1:  RRF    58,F
+00C2:  RRF    59,F
+00C3:  RRF    58,F
+00C4:  RRF    59,F
+00C5:  RRF    58,F
+00C6:  MOVLW  1F
+00C7:  ANDWF  59,F
+.................... 	 
+.................... 	return (int)MA_Output;	 
+00C8:  MOVF   58,W
+00C9:  MOVWF  78
+.................... }//End of MA_filter()... 
+....................  
+.................... int MA_Filter_8point_nibp_AC(int data) 
+.................... { 
+.................... 	int i; 
+.................... 	unsigned long MA_Output=0; 
+*
+00D6:  CLRF   58
+00D7:  CLRF   59
+....................  
+.................... 	for(i=0;i<7;i++)  MA_buffer_nibp_AC[i] = MA_buffer_nibp_AC[i+1]; 
+00D8:  CLRF   57
+00D9:  MOVF   57,W
+00DA:  SUBLW  06
+00DB:  BTFSS  03.0
+00DC:  GOTO   0F3
+00DD:  MOVLW  3A
+00DE:  ADDWF  57,W
+00DF:  MOVWF  78
+00E0:  CLRF   7A
+00E1:  BTFSC  03.0
+00E2:  INCF   7A,F
+00E3:  MOVLW  01
+00E4:  ADDWF  57,W
+00E5:  ADDLW  3A
+00E6:  MOVWF  04
+00E7:  BCF    03.7
+00E8:  MOVF   00,W
+00E9:  MOVWF  5D
+00EA:  MOVF   78,W
+00EB:  MOVWF  04
+00EC:  BCF    03.7
+00ED:  BTFSC  7A.0
+00EE:  BSF    03.7
+00EF:  MOVF   5D,W
+00F0:  MOVWF  00
+00F1:  INCF   57,F
+00F2:  GOTO   0D9
+.................... 	MA_buffer_nibp_AC[7] = data; 
+00F3:  MOVF   56,W
+00F4:  MOVWF  41
+.................... 	for(i=0;i<8;i++) MA_Output += MA_buffer_nibp_AC[i]; 
+00F5:  CLRF   57
+00F6:  MOVF   57,W
+00F7:  SUBLW  07
+00F8:  BTFSS  03.0
+00F9:  GOTO   104
+00FA:  MOVLW  3A
+00FB:  ADDWF  57,W
+00FC:  MOVWF  04
+00FD:  BCF    03.7
+00FE:  MOVF   00,W
+00FF:  ADDWF  58,F
+0100:  BTFSC  03.0
+0101:  INCF   59,F
+0102:  INCF   57,F
+0103:  GOTO   0F6
+.................... 	MA_Output = (MA_Output >> 3); 
+0104:  RRF    59,F
+0105:  RRF    58,F
+0106:  RRF    59,F
+0107:  RRF    58,F
+0108:  RRF    59,F
+0109:  RRF    58,F
+010A:  MOVLW  1F
+010B:  ANDWF  59,F
+.................... 	 
+.................... 	return (int)MA_Output;	 
+010C:  MOVF   58,W
+010D:  MOVWF  78
+.................... }//End of MA_filter()... 
+....................  
+.................... int MA_Filter_8point_nibp_DC(int data) 
+.................... { 
+.................... 	int i; 
+.................... 	unsigned long MA_Output=0; 
+*
+011B:  CLRF   58
+011C:  CLRF   59
+....................  
+.................... 	for(i=0;i<7;i++)  MA_buffer_nibp_DC[i] = MA_buffer_nibp_DC[i+1]; 
+011D:  CLRF   57
+011E:  MOVF   57,W
+011F:  SUBLW  06
+0120:  BTFSS  03.0
+0121:  GOTO   138
+0122:  MOVLW  42
+0123:  ADDWF  57,W
+0124:  MOVWF  78
+0125:  CLRF   7A
+0126:  BTFSC  03.0
+0127:  INCF   7A,F
+0128:  MOVLW  01
+0129:  ADDWF  57,W
+012A:  ADDLW  42
+012B:  MOVWF  04
+012C:  BCF    03.7
+012D:  MOVF   00,W
+012E:  MOVWF  5D
+012F:  MOVF   78,W
+0130:  MOVWF  04
+0131:  BCF    03.7
+0132:  BTFSC  7A.0
+0133:  BSF    03.7
+0134:  MOVF   5D,W
+0135:  MOVWF  00
+0136:  INCF   57,F
+0137:  GOTO   11E
+.................... 	MA_buffer_nibp_DC[7] = data; 
+0138:  MOVF   56,W
+0139:  MOVWF  49
+.................... 	for(i=0;i<8;i++) MA_Output += MA_buffer_nibp_DC[i]; 
+013A:  CLRF   57
+013B:  MOVF   57,W
+013C:  SUBLW  07
+013D:  BTFSS  03.0
+013E:  GOTO   149
+013F:  MOVLW  42
+0140:  ADDWF  57,W
+0141:  MOVWF  04
+0142:  BCF    03.7
+0143:  MOVF   00,W
+0144:  ADDWF  58,F
+0145:  BTFSC  03.0
+0146:  INCF   59,F
+0147:  INCF   57,F
+0148:  GOTO   13B
+.................... 	MA_Output = (MA_Output >> 3); 
+0149:  RRF    59,F
+014A:  RRF    58,F
+014B:  RRF    59,F
+014C:  RRF    58,F
+014D:  RRF    59,F
+014E:  RRF    58,F
+014F:  MOVLW  1F
+0150:  ANDWF  59,F
+.................... 	 
+.................... 	return (int)MA_Output;	 
+0151:  MOVF   58,W
+0152:  MOVWF  78
+.................... }//End of MA_filter()... 
+....................  
+.................... void biosignal_ch_sel(int ch){ 
+.................... 	set_adc_channel(ch); 
+*
+0033:  RLF    56,W
+0034:  MOVWF  77
+0035:  RLF    77,F
+0036:  RLF    77,F
+0037:  MOVLW  F8
+0038:  ANDWF  77,F
+0039:  MOVF   1F,W
+003A:  ANDLW  C7
+003B:  IORWF  77,W
+003C:  MOVWF  1F
+.................... 	delay_us(20); 
+003D:  MOVLW  21
+003E:  MOVWF  77
+003F:  DECFSZ 77,F
+0040:  GOTO   03F
+.................... } 
+0041:  RETLW  00
+....................  
+.................... void rs232_out(void){ 
+....................  
+.................... 	if(ecg_out == 0xff) ecg_out = 0xfd; 
+*
+0157:  INCFSZ 4A,W
+0158:  GOTO   15B
+0159:  MOVLW  FD
+015A:  MOVWF  4A
+.................... 	if(ppg_out == 0xff)	ppg_out = 0xfd; 
+015B:  INCFSZ 4B,W
+015C:  GOTO   15F
+015D:  MOVLW  FD
+015E:  MOVWF  4B
+.................... 	if(nibp_AC_out == 0xff)	nibp_AC_out = 0xfd; 
+015F:  INCFSZ 4C,W
+0160:  GOTO   163
+0161:  MOVLW  FD
+0162:  MOVWF  4C
+.................... 	if(nibp_DC_out == 0xff) nibp_DC_out = 0xfd; 
+0163:  INCFSZ 4D,W
+0164:  GOTO   167
+0165:  MOVLW  FD
+0166:  MOVWF  4D
+....................  
+.................... 	putc(0xff);			//for checking data 
+0167:  MOVLW  FF
+0168:  BTFSS  0C.4
+0169:  GOTO   168
+016A:  MOVWF  19
+.................... //	delay_us(10); 
+.................... 	putc(ecg_out); 
+016B:  MOVF   4A,W
+016C:  BTFSS  0C.4
+016D:  GOTO   16C
+016E:  MOVWF  19
+.................... //	delay_us(10); 
+.................... 	putc(ppg_out); 
+016F:  MOVF   4B,W
+0170:  BTFSS  0C.4
+0171:  GOTO   170
+0172:  MOVWF  19
+.................... //	delay_us(10); 
+.................... 	putc(nibp_AC_out); 
+0173:  MOVF   4C,W
+0174:  BTFSS  0C.4
+0175:  GOTO   174
+0176:  MOVWF  19
+.................... //	delay_us(10); 
+.................... 	putc(nibp_DC_out); 
+0177:  MOVF   4D,W
+0178:  BTFSS  0C.4
+0179:  GOTO   178
+017A:  MOVWF  19
+.................... 	delay_us(10); 
+017B:  MOVLW  10
+017C:  MOVWF  77
+017D:  DECFSZ 77,F
+017E:  GOTO   17D
+017F:  NOP
+.................... } 
+
+Configuration Fuses:
+   Word  1: 3F72   HS NOWDT PUT NODEBUG NOPROTECT BROWNOUT NOLVP NOCPD NOWRT

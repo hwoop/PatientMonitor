@@ -1,0 +1,6 @@
+>>> Warning 208 "with_nibp_ing.c" Line 46(1,9): Function not void and does not return a value  RTCC_ISR
+>>> Warning 203 "with_nibp_ing.c" Line 77(1,1): Condition always TRUE
+>>> Warning 202 "with_nibp_ing.c" Line 5(5,8): Variable never used:   rs232_errors
+>>> Warning 202 "with_nibp_ing.c" Line 73(13,20): Variable never used:   timeCnt
+      Memory usage:   ROM=6%      RAM=16% - 18%
+      0 Errors,  4 Warnings.

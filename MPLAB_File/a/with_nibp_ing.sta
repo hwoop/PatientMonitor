@@ -1,0 +1,54 @@
+
+ROM used: 500 (6%)
+          500 (6%) including unused fragments
+
+          1 Average locations per line
+          7 Average locations per statement
+
+RAM used: 59 (16%) at main() level
+          68 (18%) worst case
+
+Stack used: 3 worst case (out of 6 total available)
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+  182    74 100  with_nibp_ing.c
+  313     0   0  C:\PROGRA~1\PICC\devices\16F877a.h
+----- -----
+  495    74 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+0     20   4   1             @delay_ms1
+0    324  65   0   440  1.9  RTCC_ISR
+0     90  18   2   115  2.1  MAIN
+ Inline        8   392  6.0  MA_Filter_8point_ecg
+ Inline        8   392  6.0  MA_Filter_8point_ppg
+ Inline        8   392  6.0  MA_Filter_8point_nibp_AC
+ Inline        8   392  6.0  MA_Filter_8point_nibp_DC
+0     15   3   1    42  1.1  biosignal_ch_sel
+ Inline        0   328  2.8  rs232_out
+
+Program metrics:
+    Functions               8
+    Statements              74
+    Comments                102
+    Volume (V)              3832
+    Difficilty (D)          31.7
+    Effort to implement (E) 121471
+    Time to implement (T)   1 hours, 52 minutes
+    Est Delivered Bugs (B)  1
+    Cyclomatic Complexity   12
+    Maintainability (MI)    68
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00003     4  0  
+00004-00032    47  0  
+00033-007FF   449  1548  
+00800-00FFF     0  2048  
+01000-017FF     0  2048  
+01800-01FFF     0  2048  
+
+
+
