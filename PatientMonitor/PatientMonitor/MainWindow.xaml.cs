@@ -27,7 +27,6 @@ namespace PatientMonitor
         }
 
         public WaveformChart Chart1 { get; set; }
-        public WaveformChart Chart2 { get; set; }
         private void Init()
         {
             Chart1 = new WaveformChart();

@@ -62,6 +62,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ExternalManager\CommunicationManager.cs" />
+    <Compile Include="ExternalManager\Waveform\ECG\ECGCommunicator.cs" />
+    <Compile Include="ExternalManager\Waveform\ECG\ECGManager.cs" />
+    <Compile Include="ExternalManager\Waveform\WaveformBase.cs" />
     <Compile Include="WaveformChart.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
