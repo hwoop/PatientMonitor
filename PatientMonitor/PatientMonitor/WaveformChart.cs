@@ -18,29 +18,9 @@ namespace PatientMonitor
             }
         }
 
-        public enum ChartType
+        public WaveformChart()
         {
-            ECG,
-            PPG,
-            NIBP_AC,
-            NIBP_DC
-        }
-
-
-
-        public ChartType myChartType;
-        public WaveformChart(ChartType chartType)
-        {
-            myChartType = chartType;
             UpdateUI();
-        }
-
-        public string StringChartType
-        {
-            get
-            {
-                return nameof(myChartType.);
-            }
         }
 
         void UpdateUI()

@@ -30,8 +30,7 @@ namespace PatientMonitor
         public WaveformChart Chart2 { get; set; }
         private void Init()
         {
-            Chart1 = new WaveformChart(WaveformChart.ChartType.ECG);
-            Chart2 = new WaveformChart(WaveformChart.ChartType.PPG);
+            Chart1 = new WaveformChart();
         }
     }
 }
