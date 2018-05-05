@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PatientMonitor", "PatientMonitor\PatientMonitor.csproj", "{BE4423E1-5036-411F-972C-B544C0A575A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Waveform", "Waveform\Waveform.csproj", "{570FB9C0-D7F3-40BB-98B7-CE4191EFB259}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{BE4423E1-5036-411F-972C-B544C0A575A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE4423E1-5036-411F-972C-B544C0A575A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE4423E1-5036-411F-972C-B544C0A575A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{570FB9C0-D7F3-40BB-98B7-CE4191EFB259}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{570FB9C0-D7F3-40BB-98B7-CE4191EFB259}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{570FB9C0-D7F3-40BB-98B7-CE4191EFB259}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{570FB9C0-D7F3-40BB-98B7-CE4191EFB259}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

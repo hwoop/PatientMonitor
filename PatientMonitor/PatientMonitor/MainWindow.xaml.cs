@@ -24,13 +24,15 @@ namespace PatientMonitor
         public MainWindow()
         {
             InitializeComponent();
-            Init();
+            InitSetting();
         }
 
-        public WaveformChart Chart1 { get; set; }
-        private void Init()
+        //public WaveformChart Chart1 { get; set; }
+        private void InitSetting()
         {
-            Chart1 = new WaveformChart();
+            // WaveformChart.cs will be removed because of changing implementation how.
+            //Chart1 = new WaveformChart();
+
         }
     }
 }
