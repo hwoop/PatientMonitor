@@ -6,7 +6,25 @@
         xmlns:local="clr-namespace:PatientMonitor"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="525" x:Name="_this">
-    <Grid Background="DarkGray">
+    <Grid>
+        <WindowsFormsHost x:Name="host" Height="300">
+            <winformchart:Chart x:Name="chart1" Dock="Fill">
+
+                <winformchart:Chart.Series>
+                    <winformchart:Series Name="series" ChartType="Line" />
+                </winformchart:Chart.Series>
+                <winformchart:Chart.ChartAreas>
+                    <winformchart:ChartArea />
+                </winformchart:Chart.ChartAreas>
+                <winformchart:Chart.Legends>
+                    <winformchart:Legend BackColor="Transparent">
+                    </winformchart:Legend>
+                </winformchart:Chart.Legends>
+            </winformchart:Chart>
+        </WindowsFormsHost>
+    </Grid>
+    
+    <!--<Grid Background="DarkGray">
         <Grid.Resources>
             <DataTemplate DataType="{x:Type local:WaveformChart}" x:Key="waveformChart">
                 <Grid>
@@ -29,7 +47,7 @@
             <ColumnDefinition Width="10"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Head Area -->
+        --><!-- Head Area --><!--
         <Grid Grid.Row="0" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
@@ -38,7 +56,7 @@
             </Grid.ColumnDefinitions>
         </Grid>
 
-        <!-- Body Area -->
+        --><!-- Body Area --><!--
         <Grid Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition />
@@ -48,9 +66,9 @@
             <ContentControl ContentTemplate="{StaticResource waveformChart}" Content="{Binding ElementName=_this, Path=WaveForm2}" Grid.Row="1"/>
         </Grid>
         
-        <!-- Status Area -->
+        --><!-- Status Area --><!--
         <Grid Grid.Row="2" Grid.Column="1">
             
         </Grid>
-    </Grid>
+    </Grid>-->
 </Window>
