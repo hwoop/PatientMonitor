@@ -79,6 +79,35 @@ namespace Waveform
             }
         }
 
+        public void CheckAndAddSeriesToGraph(string strPinDescription, string strUnit)
+        {
+            foreach (Series se in chart1.Series)
+            {
+                if (se.Name == strPinDescription)
+                {
+                    return; //already exists
+                }
+            }
+            Series s = chart1.Series.Add(strPinDescription);
+            s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.FastLine;
+            s.BorderColor = System.Drawing.Color.FromArgb(180, 26, 59, 105);
+            s.BorderWidth = 2; // show a THICK line for high visibility, can be reduced for high volume data points to be better visible
+            s.ShadowOffset = 1;
+            s.IsVisibleInLegend = true;
+            //s.IsValueShownAsLabel = true;                       
+            s.LegendText = strPinDescription + " (" + strUnit + ")";
+            s.LegendToolTip = strPinDescription + " (" + strUnit + ")";
+        }
+
+        public void AddPointToLine(string strPinName, double dValueY, double dValueX)
+        {
+            // we don't want series to be drawn while adding points to it.
+            //this can reduce flicker.
+            chart1.Series.SuspendUpdates();
+
+            chart1.Series[strPinName].Points.AddXY(dValueX, dValueY);
+            chart1.Series.ResumeUpdates();
+        }
 
         #region UI event made by xaml
         private void UserControl_SizeChanged(object sender, System.Windows.SizeChangedEventArgs e)
