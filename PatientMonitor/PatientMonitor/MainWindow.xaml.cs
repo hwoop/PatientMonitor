@@ -34,14 +34,17 @@ namespace PatientMonitor
             InitSetting();
 
 
-            waveformUC.CheckAndAddSeriesToGraph("trial", "rpm");
-            dVariance = yValue;
-            rand = new Random();
+            waveformUC.CheckAndAddSeriesToGraph("ABC", "rpm");
+            //dVariance = yValue;
+            //rand = new Random();
 
-            timeStarted = DateTime.Now;
-            timer.Interval = TimeSpan.FromMilliseconds(10);
-            timer.Tick += timer_Tick;
-            timer.Start();
+            //timeStarted = DateTime.Now;
+            //timer.Interval = TimeSpan.FromMilliseconds(1);
+            //timer.Tick += timer_Tick;
+            //timer.Start();
+
+            waveformUC.AddPointToLine("ABC", 1, 0);
+            waveformUC.AddPointToLine("ABC", 0, 10);
         }
 
         //public WaveformChart Chart1 { get; set; }
@@ -54,8 +57,7 @@ namespace PatientMonitor
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            double dValueX = (double)(DateTime.Now.Subtract(timeStarted).TotalSeconds);
-            waveformUC.AddPointToLine("trial", yValue + (rand.NextDouble() - dVariance), dValueX);
+            //waveformUC.AddPointToLine("ABC", 0.5, i+j);
         }
     }
 }
