@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PatientMonitor.Properties
+namespace PatinerMonitor.Properties
 {
 
 

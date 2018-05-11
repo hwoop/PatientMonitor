@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PatinerMonitor.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,10 +13,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Windows.Forms.Integration;
 using System.Windows.Threading;
 
-namespace PatientMonitor
+namespace PatinerMonitor
 {
     /// <summary>
     /// MainWindow.xaml에 대한 상호 작용 논리
@@ -23,41 +23,38 @@ namespace PatientMonitor
     public partial class MainWindow : Window
     {
         DateTime timeStarted;
-        double yValue = 2;
-        double dVariance = 0;
-        Random rand;
-        DispatcherTimer timer = new DispatcherTimer();
+        DispatcherTimer GetDataTimer = new DispatcherTimer();
+
+        WaveformManager ECG;
 
         public MainWindow()
         {
             InitializeComponent();
-            InitSetting();
 
+            ECG = new WaveformManager();
+            myGrid.Children.Add(ECG);
+            ECG.Loaded += ECG_Loaded;
 
-            waveformUC.CheckAndAddSeriesToGraph("ABC", "rpm");
-            //dVariance = yValue;
-            //rand = new Random();
-
-            //timeStarted = DateTime.Now;
-            //timer.Interval = TimeSpan.FromMilliseconds(1);
-            //timer.Tick += timer_Tick;
-            //timer.Start();
-
-            waveformUC.AddPointToLine("ABC", 1, 0);
-            waveformUC.AddPointToLine("ABC", 0, 10);
+            SetTimer();
         }
 
-        //public WaveformChart Chart1 { get; set; }
-        private void InitSetting()
+        private void ECG_Loaded(object sender, RoutedEventArgs e)
         {
-            // WaveformChart.cs will be removed because of changing implementation how.
-            //Chart1 = new WaveformChart();
+            ECG.Init(2);
+        }
 
+        private void SetTimer()
+        {
+            timeStarted = DateTime.Now;
+            GetDataTimer.Interval = TimeSpan.FromMilliseconds(50);
+            GetDataTimer.Tick += timer_Tick;
+            GetDataTimer.Start();
         }
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            //waveformUC.AddPointToLine("ABC", 0.5, i+j);
+            var rand = new Random();
+            ECG.Draw(((rand.Next() % 100) + 50));
         }
     }
 }
