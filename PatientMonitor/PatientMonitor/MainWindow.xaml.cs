@@ -37,6 +37,8 @@ namespace PatinerMonitor
         public MainWindow()
         {
             InitializeComponent();
+
+            SetTimer();
         }
 
         private void SetTimer()
@@ -63,6 +65,15 @@ namespace PatinerMonitor
 
         private void btnBrowseECG_Click(object sender, RoutedEventArgs e)
         {
+            GetDataTimer.Stop();
+
+            if (ECG != null)
+            {
+                ECG.Children.Clear();
+                ECG.Loaded -= ECG_Loaded;
+                ECG = null;
+            }
+                
             ECG = new WaveformManager();
             ecgGrid.Children.Add(ECG);
             ECG.Loaded += ECG_Loaded;
@@ -78,11 +89,20 @@ namespace PatinerMonitor
                 sim_ecg.LoadCSV(ofd.FileName);
             }
 
-            SetTimer();
+            GetDataTimer.Start();
         }
 
         private void btnBrowsePPG_Click(object sender, RoutedEventArgs e)
         {
+            GetDataTimer.Stop();
+
+            if (PPG != null)
+            {
+                PPG.Children.Clear();
+                PPG.Loaded -= PPG_Loaded;
+                PPG = null;
+            }
+
             PPG = new WaveformManager();
             ppgGrid.Children.Add(PPG);
             PPG.Loaded += PPG_Loaded;
@@ -98,10 +118,7 @@ namespace PatinerMonitor
                 sim_ppg.LoadCSV(ofd.FileName);
             }
 
-            if (GetDataTimer != null)
-            {
-                SetTimer();
-            }
+            GetDataTimer.Start();
         }
         private void ECG_Loaded(object sender, RoutedEventArgs e)
         {

@@ -30,7 +30,6 @@ namespace PatinerMonitor.Model
 
         public WaveformManager()
         {
-
         }
 
         public void Init(double speed = 1)
