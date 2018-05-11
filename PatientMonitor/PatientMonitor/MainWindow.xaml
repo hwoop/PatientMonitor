@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PatinerMonitor"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" x:Name="_this">
+        Title="MainWindow" Height="350" Width="525" x:Name="_this" ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.3*"/>
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
@@ -15,9 +16,18 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        
-        <Grid x:Name="myGrid" Grid.Row="1" Grid.Column="1">
 
-        </Grid>
+        <Button x:Name="btnBrowseECG" Content="ECG" Grid.Row="0" Grid.Column="0" Width="50" Height="25" Click="btnBrowseECG_Click"/>
+        <Border Background="LightGray" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+            <Grid x:Name="ecgGrid" >
+            
+            </Grid>
+        </Border>
+        <Button x:Name="btnBrowsePPG" Content="PPG" Grid.Row="1" Grid.Column="0" Width="50" Height="25" Click="btnBrowsePPG_Click"/>
+        <Border Background="LightBlue" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
+            <Grid x:Name="ppgGrid">
+
+            </Grid>
+        </Border>
     </Grid>
 </Window>

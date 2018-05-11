@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace PatinerMonitor.Model
         // x is the general keyword representing time axis, so used lower case.
         private double prevX, prevY;
         private double x;
-        public int Speed;
+        public double Speed;
         #endregion
 
         #region PropertyChanged
@@ -29,9 +30,10 @@ namespace PatinerMonitor.Model
 
         public WaveformManager()
         {
+
         }
 
-        public void Init(int speed = 1)
+        public void Init(double speed = 1)
         {
             prevX = x = ActualWidth;
             prevY = ActualHeight / 2;
@@ -47,7 +49,6 @@ namespace PatinerMonitor.Model
                 {
                     x = 0;
                     Children.Clear();
-                    Speed++;
                 }
 
                 Line line = new Line();
